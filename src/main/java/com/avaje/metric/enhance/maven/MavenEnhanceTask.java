@@ -1,20 +1,18 @@
 package com.avaje.metric.enhance.maven;
 
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.*;
+import org.avaje.metric.agent.Transformer;
+import org.avaje.metric.agent.offline.OfflineFileTransform;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
-import org.avaje.metric.agent.Transformer;
-import org.avaje.metric.agent.offline.OfflineFileTransform;
 
 /**
  * A Maven Plugin that can enhance beans adding timed metric collection.
@@ -25,9 +23,6 @@ import org.avaje.metric.agent.offline.OfflineFileTransform;
  * <p>
  * The parameters are:
  * <ul>
- * <li><b>classSource</b> This is the root directory where the .class files are
- * found. If this is left out then this defaults to
- * ${project.build.outputDirectory}.</li>
  * <li><b>classDestination</b> This is the root directory where the .class files
  * are written to. If this is left out then this defaults to the
  * <b>classSource</b>.</li>
@@ -38,62 +33,46 @@ import org.avaje.metric.agent.offline.OfflineFileTransform;
  * debug level in the form of debug=1 etc.</li>
  * </ul>
  * </p>
- * 
- * @execute phase="process-classes"
- * @goal enhance
- * @phase process-classes
  */
+@Mojo(name = "enhance", defaultPhase = LifecyclePhase.PROCESS_CLASSES, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
+//@Execute(goal = "enhance")
 public class MavenEnhanceTask extends AbstractMojo {
 
   /**
-   * The maven project.
-   * 
-   * @parameter expression="${project}"
-   * @required
+   * The classpath used to read related classes.
    */
-  protected MavenProject project;
-
-//  /**
-//   * the classpath used to search for e.g. inherited classes
-//   * 
-//   * @parameter
-//   */
-//  private String classpath;
+  @Parameter(property = "project.compileClasspathElements", required = true, readonly = true)
+  private List<String> compileClasspathElements;
 
   /**
-   * Set the directory holding the class files we want to transform.
-   * 
-   * @parameter default-value="${project.build.outputDirectory}"
+   * The directory holding the class files we want to transform.
    */
+  @Parameter(property = "project.build.outputDirectory", required = true, readonly = true)
   private String classSource;
 
   /**
    * Set the destination directory where we will put the transformed classes.
-   * <p>
+   * <p/>
    * This is commonly the same as the classSource directory.
-   * </p>
-   * 
-   * @parameter
    */
+  @Parameter
   String classDestination;
 
   /**
    * Set the arguments passed to the transformer.
-   * 
-   * @parameter
    */
+  @Parameter
   String transformArgs;
 
   /**
    * Set the package name to search for classes to transform.
-   * <p>
+   * <p/>
    * If the package name ends in "/**" then this recursively transforms all sub
    * packages as well.
-   * </p>
-   * 
-   * @parameter
    */
+  @Parameter
   String packages;
+
 
   public void execute() throws MojoExecutionException {
 
@@ -106,53 +85,40 @@ public class MavenEnhanceTask extends AbstractMojo {
       classDestination = classSource;
     }
 
-    File f = new File("");
-    log.info("Current Directory: " + f.getAbsolutePath());
-
-//    StringBuilder extraClassPath = new StringBuilder();
-//    extraClassPath.append(classSource);
-//    if (classpath != null) {
-//      if (!extraClassPath.toString().endsWith(";")) {
-//        extraClassPath.append(";");
-//      }
-//      extraClassPath.append(classpath);
-//    }
-
     ClassLoader cl = buildClassLoader();
 
     Transformer t = new Transformer(transformArgs, cl);
-    
+
     log.info("classSource=" + classSource + "  transformArgs=" + transformArgs + "  classDestination="
-        + classDestination + "  packages=" + packages);
+            + classDestination + "  packages=" + packages);
 
     OfflineFileTransform ft = new OfflineFileTransform(t, cl, classSource, classDestination);
     ft.process(packages);
   }
-  
+
   private ClassLoader buildClassLoader() {
-    
+
     URL[] urls = buildClassPath();
 
     return URLClassLoader.newInstance(urls, Thread.currentThread().getContextClassLoader());
   }
 
-  @SuppressWarnings({ "unchecked" })
+  @SuppressWarnings({"unchecked"})
   private URL[] buildClassPath() {
     try {
-      List<URL> urls = new ArrayList<URL>();
-      
-      URL projectOut = new File(project.getBuild().getOutputDirectory()).toURI().toURL();
-      urls.add(projectOut);
+      List<URL> urls = new ArrayList<URL>(compileClasspathElements.size());
 
-      Set<Artifact> artifacts = (Set<Artifact>) project.getArtifacts();
-      for (Artifact a : artifacts) {
-        urls.add(a.getFile().toURI().toURL());
+      Log log = getLog();
+
+      for (String element : compileClasspathElements) {
+        if (log.isDebugEnabled()) {
+          log.debug("ClasspathElement: " + element);
+        }
+        urls.add(new File(element).toURI().toURL());
       }
-      
-      getLog().debug("ClassPath URLs: "+urls);
-      
+
       return urls.toArray(new URL[urls.size()]);
-      
+
     } catch (MalformedURLException e) {
       throw new RuntimeException(e);
     }

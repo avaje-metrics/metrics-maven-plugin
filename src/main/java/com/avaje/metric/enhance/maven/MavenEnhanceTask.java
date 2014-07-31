@@ -35,11 +35,10 @@ import java.util.List;
  * </p>
  */
 @Mojo(name = "enhance", defaultPhase = LifecyclePhase.PROCESS_CLASSES, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
-//@Execute(goal = "enhance")
 public class MavenEnhanceTask extends AbstractMojo {
 
   /**
-   * The classpath used to read related classes.
+   * The class path used to read related classes.
    */
   @Parameter(property = "project.compileClasspathElements", required = true, readonly = true)
   private List<String> compileClasspathElements;
@@ -90,12 +89,15 @@ public class MavenEnhanceTask extends AbstractMojo {
     Transformer t = new Transformer(transformArgs, cl);
 
     log.info("classSource=" + classSource + "  transformArgs=" + transformArgs + "  classDestination="
-            + classDestination + "  packages=" + packages);
+            + classDestination + "  packages=" + packages+" classPathSize:"+ compileClasspathElements.size());
 
     OfflineFileTransform ft = new OfflineFileTransform(t, cl, classSource, classDestination);
     ft.process(packages);
   }
 
+  /**
+   * Return the ClassLoader used during the enhancement.
+   */
   private ClassLoader buildClassLoader() {
 
     URL[] urls = buildClassPath();
@@ -103,8 +105,11 @@ public class MavenEnhanceTask extends AbstractMojo {
     return URLClassLoader.newInstance(urls, Thread.currentThread().getContextClassLoader());
   }
 
-  @SuppressWarnings({"unchecked"})
+  /**
+   * Return the class path using project compileClasspathElements.
+   */
   private URL[] buildClassPath() {
+      
     try {
       List<URL> urls = new ArrayList<URL>(compileClasspathElements.size());
 

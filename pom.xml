@@ -10,7 +10,7 @@
   <groupId>org.avaje.metric</groupId>
   <artifactId>enhance-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>3.2.0</version>
+  <version>3.2.1-SNAPSHOT</version>
   <name>Maven byte code enhancement for Timed metric collection</name>
   <url>http://www.avaje.org</url>
 

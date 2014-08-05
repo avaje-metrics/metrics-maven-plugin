@@ -8,6 +8,8 @@ import org.avaje.metric.agent.Transformer;
 import org.avaje.metric.agent.offline.OfflineFileTransform;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -92,7 +94,15 @@ public class MavenEnhanceTask extends AbstractMojo {
             + classDestination + "  packages=" + packages+" classPathSize:"+ compileClasspathElements.size());
 
     OfflineFileTransform ft = new OfflineFileTransform(t, cl, classSource, classDestination);
-    ft.process(packages);
+    try {
+      ft.process(packages);
+      
+    } catch (FileNotFoundException e) {
+      log.warn("Unable to transform classes: "+e.getMessage());
+      
+    } catch (IOException e) {
+      throw new MojoExecutionException("Error trying to transform classes", e);
+    }
   }
 
   /**

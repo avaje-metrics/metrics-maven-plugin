@@ -21,7 +21,6 @@ import java.util.List;
  * <p>
  * You can use this plugin as part of your build process to enhance beans
  * etc.
- * </p>
  * <p>
  * The parameters are:
  * <ul>
@@ -34,7 +33,6 @@ import java.util.List;
  * <li><b>transformArgs</b> Arguments passed to the transformer. Typically a
  * debug level in the form of debug=1 etc.</li>
  * </ul>
- * </p>
  */
 @Mojo(name = "enhance", defaultPhase = LifecyclePhase.PROCESS_CLASSES, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class MavenEnhanceTask extends AbstractMojo {

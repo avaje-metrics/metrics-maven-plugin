@@ -1,4 +1,4 @@
-package com.avaje.metric.enhance.maven;
+package org.avaje.metric.enhance.maven;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -119,7 +119,7 @@ public class MavenEnhanceTask extends AbstractMojo {
   private URL[] buildClassPath() {
       
     try {
-      List<URL> urls = new ArrayList<URL>(compileClasspathElements.size());
+      List<URL> urls = new ArrayList<>(compileClasspathElements.size());
 
       Log log = getLog();
 

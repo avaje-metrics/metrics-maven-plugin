@@ -4,6 +4,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.*;
+import org.avaje.metric.agent.AgentManifest;
 import org.avaje.metric.agent.Transformer;
 import org.avaje.metric.agent.offline.OfflineFileTransform;
 
@@ -15,6 +16,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A Maven Plugin that can enhance beans adding timed metric collection.
@@ -55,23 +57,7 @@ public class MavenEnhanceTask extends AbstractMojo {
    * This is commonly the same as the classSource directory.
    */
   @Parameter
-  String classDestination;
-
-  /**
-   * Set the arguments passed to the transformer.
-   */
-  @Parameter
-  String transformArgs;
-
-  /**
-   * Set the package name to search for classes to transform.
-   * <p/>
-   * If the package name ends in "/**" then this recursively transforms all sub
-   * packages as well.
-   */
-  @Parameter
-  String packages;
-
+  private String classDestination;
 
   public void execute() throws MojoExecutionException {
 
@@ -86,18 +72,25 @@ public class MavenEnhanceTask extends AbstractMojo {
 
     ClassLoader cl = buildClassLoader();
 
-    Transformer t = new Transformer(transformArgs, cl);
+    AgentManifest agentManifest = AgentManifest.read(cl);
 
-    log.info("classSource=" + classSource + "  transformArgs=" + transformArgs + "  classDestination="
-            + classDestination + "  packages=" + packages+" classPathSize:"+ compileClasspathElements.size());
+    Transformer t = new Transformer(agentManifest);
+    t.setLogger(metricName -> {
+      getLog().info("Add metric " + metricName);
+    });
+
+    Set<String> packageSet = agentManifest.getPackages();
+
+    log.info("classSource=" + classSource + "  classDestination="
+            + classDestination + "  manifestPackages=" + packageSet +" classPathSize:"+ compileClasspathElements.size());
 
     OfflineFileTransform ft = new OfflineFileTransform(t, cl, classSource, classDestination);
     try {
-      ft.process(packages);
-      
+      ft.process(null);
+
     } catch (FileNotFoundException e) {
       log.warn("Unable to transform classes: "+e.getMessage());
-      
+
     } catch (IOException e) {
       throw new MojoExecutionException("Error trying to transform classes", e);
     }
@@ -117,7 +110,7 @@ public class MavenEnhanceTask extends AbstractMojo {
    * Return the class path using project compileClasspathElements.
    */
   private URL[] buildClassPath() {
-      
+
     try {
       List<URL> urls = new ArrayList<>(compileClasspathElements.size());
 

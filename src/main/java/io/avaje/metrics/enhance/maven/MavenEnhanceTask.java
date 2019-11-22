@@ -1,12 +1,12 @@
-package org.avaje.metric.enhance.maven;
+package io.avaje.metrics.enhance.maven;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.*;
-import org.avaje.metric.agent.AgentManifest;
-import org.avaje.metric.agent.Transformer;
-import org.avaje.metric.agent.offline.OfflineFileTransform;
+import io.avaje.metrics.agent.AgentManifest;
+import io.avaje.metrics.agent.Transformer;
+import io.avaje.metrics.agent.offline.OfflineFileTransform;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -76,7 +76,7 @@ public class MavenEnhanceTask extends AbstractMojo {
 
     Transformer t = new Transformer(agentManifest);
     t.setLogger(metricName -> {
-      getLog().info("Add metric " + metricName);
+      getLog().info("Add timed metric " + metricName);
     });
 
     Set<String> packageSet = agentManifest.getPackages();

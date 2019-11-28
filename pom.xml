@@ -15,7 +15,7 @@
   <url>http://www.avaje.org</url>
 
   <properties>
-    <metric.agent.version>8.1</metric.agent.version>
+    <metric.agent.version>8.2</metric.agent.version>
   </properties>
 
   <scm>

@@ -1,6 +1,9 @@
-# avaje-metric-mavenenhancer
+# avaje metrics maven plugin
 
 
-maven plugin for build time metric agent enhancement. Will add in Timed metric collection on @Timed, JAX_RS Endpoints and Spring Services/Components.
+maven plugin for build time metrics enhancement. Will add in Timed metric collection on classes
+and methods annotated with `@Timed`.
 
-Refer to documentation at http://avaje-metric.github.io/
+Javalin DInject controllers will automatically be enhanced with a prefix of `web.api`
+
+Refer to documentation at http://avaje-metrics.github.io/

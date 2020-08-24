@@ -10,7 +10,7 @@
   <groupId>io.avaje.metrics</groupId>
   <artifactId>metrics-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>8.6</version>
+  <version>8.7-SNAPSHOT</version>
   <name>Maven byte code enhancement for Timed metric collection</name>
   <url>http://www.avaje.org</url>
 
@@ -20,7 +20,7 @@
 
   <scm>
     <developerConnection>scm:git:git@github.com:avaje-metrics/metrics-maven-plugin.git</developerConnection>
-    <tag>metrics-maven-plugin-8.6</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <dependencies>

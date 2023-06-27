@@ -100,9 +100,7 @@ public class MavenEnhanceTask extends AbstractMojo {
    * Return the ClassLoader used during the enhancement.
    */
   private ClassLoader buildClassLoader() {
-
     URL[] urls = buildClassPath();
-
     return URLClassLoader.newInstance(urls, Thread.currentThread().getContextClassLoader());
   }
 
@@ -110,7 +108,6 @@ public class MavenEnhanceTask extends AbstractMojo {
    * Return the class path using project compileClasspathElements.
    */
   private URL[] buildClassPath() {
-
     try {
       List<URL> urls = new ArrayList<>(compileClasspathElements.size());
 
@@ -123,7 +120,7 @@ public class MavenEnhanceTask extends AbstractMojo {
         urls.add(new File(element).toURI().toURL());
       }
 
-      return urls.toArray(new URL[urls.size()]);
+      return urls.toArray(new URL[0]);
 
     } catch (MalformedURLException e) {
       throw new RuntimeException(e);

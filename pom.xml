@@ -3,19 +3,18 @@
 
   <parent>
     <groupId>org.avaje</groupId>
-    <artifactId>java8-oss</artifactId>
-    <version>2.1</version>
+    <artifactId>java11-oss</artifactId>
+    <version>3.10</version>
   </parent>
 
   <groupId>io.avaje.metrics</groupId>
   <artifactId>metrics-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>8.7-SNAPSHOT</version>
+  <version>9.0-SNAPSHOT</version>
   <name>Maven byte code enhancement for Timed metric collection</name>
-  <url>http://www.avaje.org</url>
 
   <properties>
-    <metric.agent.version>8.6</metric.agent.version>
+    <metric.agent.version>9.0-SNAPSHOT</metric.agent.version>
   </properties>
 
   <scm>
@@ -34,21 +33,14 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>3.0.5</version>
+      <version>3.9.0</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>3.3</version>
+      <version>3.8.1</version>
       <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13.1</version>
-      <scope>test</scope>
     </dependency>
 
   </dependencies>
@@ -60,7 +52,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>3.3</version>
+        <version>3.6.4</version>
         <configuration>
           <goalPrefix>enhance</goalPrefix>
           <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>

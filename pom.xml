@@ -10,11 +10,11 @@
   <groupId>io.avaje.metrics</groupId>
   <artifactId>metrics-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>9.0-RC1</version>
+  <version>9.0-RC2</version>
   <name>Maven byte code enhancement for Timed metric collection</name>
 
   <properties>
-    <metric.agent.version>9.0-RC1</metric.agent.version>
+    <metric.agent.version>9.0-RC2</metric.agent.version>
   </properties>
 
   <scm>
